@@ -4,8 +4,8 @@ public class SearchForm {
 
     private String url;
     private String textToSearch;
-    private String numOfThreads;
-    private String maxNumberOfUrl;
+    private Integer numOfThreads;
+    private Integer maxNumberOfUrl;
 
     public String getUrl() {
         return url;
@@ -23,19 +23,19 @@ public class SearchForm {
         this.textToSearch = textToSearch;
     }
 
-    public String getNumOfThreads() {
+    public Integer getNumOfThreads() {
         return numOfThreads;
     }
 
-    public void setNumOfThreads(String numOfThreads) {
+    public void setNumOfThreads(Integer numOfThreads) {
         this.numOfThreads = numOfThreads;
     }
 
-    public String getMaxNumberOfUrl() {
+    public Integer getMaxNumberOfUrl() {
         return maxNumberOfUrl;
     }
 
-    public void setMaxNumberOfUrl(String maxNumberOfUrl) {
+    public void setMaxNumberOfUrl(Integer maxNumberOfUrl) {
         this.maxNumberOfUrl = maxNumberOfUrl;
     }
 }

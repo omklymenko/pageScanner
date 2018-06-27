@@ -14,9 +14,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Service
-public class PageLoadService {
+public class PageLoadService implements LoadService {
 
-    private ExecutorService threadPool = Executors.newFixedThreadPool(3);
+    private ExecutorService threadPool;
+
+    public void init(Integer numOfThreads){
+        threadPool = Executors.newFixedThreadPool(numOfThreads);
+    }
 
     public Future<Document> loadPage(String url){
 

@@ -12,35 +12,42 @@ import java.util.concurrent.Future;
 public class PageParseService {
 
     @Autowired
-    private PageLoadService pageLoadService;
+    private LoadService pageLoadService;
     @Autowired
     private LinkSearchService linkSearchService;
     @Autowired
     private TextSearchService textSearchService;
 
-    private Queue<String> documentQueue = new PriorityQueue<>();
+    private Queue<Future<Document>> documentQueue = new ArrayDeque<>();
+    private Queue<String> linksQueue = new ArrayDeque<>();
     int count = 0;
+    boolean stopSearch = false;
+    boolean searchFinished = false;
     private List<SearchResultItem> searchResultItemList = new ArrayList<>();
 
     public void processPage(SearchForm searchForm){
-        documentQueue.add(searchForm.getUrl());
-        while(!documentQueue.isEmpty()) {
+
+        while(!documentQueue.isEmpty() && !stopSearch) {
+            String currentLink = linksQueue.poll();
+            Future<Document> future = documentQueue.poll();
             SearchResultItem searchResultItem = new SearchResultItem();
+            searchResultItem.setLink(currentLink);
             searchResultItemList.add(searchResultItem);
-            searchResultItem.setLink(documentQueue.peek());
             searchResultItem.setStatus(Status.DOWNLOAD);
-            Future<Document> future = pageLoadService.loadPage(documentQueue.poll());
             Document document = null;
             try {
                 document = future.get();
             } catch (InterruptedException | ExecutionException e) {
                 searchResultItem.setStatus(Status.ERROR);
                 e.printStackTrace();
+                searchResultItem.setErrorMessage(e.getMessage());
+                continue;
             }
             List<String> links = linkSearchService.searchLinks(document);
             for (String link : links) {
-                if(count < 5) {
-                    documentQueue.add(link);
+                if(count < searchForm.getMaxNumberOfUrl()) {
+                    documentQueue.add(pageLoadService.loadPage(link));
+                    linksQueue.add(link);
                     count++;
                 }
             }
@@ -51,5 +58,25 @@ public class PageParseService {
                 searchResultItem.setStatus(Status.NOT_FOUND);
             }
         }
+        searchFinished = true;
+    }
+
+    public SearchProgress getCurrentProgress() {
+        return new SearchProgress(searchFinished, searchResultItemList);
+    }
+
+    public void startSearch(SearchForm searchForm) {
+        stopSearch = false;
+        searchFinished = false;
+        pageLoadService.init(searchForm.getNumOfThreads());
+        linksQueue.add(searchForm.getUrl());
+        documentQueue.add(pageLoadService.loadPage(searchForm.getUrl()));
+        new Thread(() -> {
+            processPage(searchForm);
+        }).start();
+    }
+
+    public void stopSearch() {
+        stopSearch = true;
     }
 }
