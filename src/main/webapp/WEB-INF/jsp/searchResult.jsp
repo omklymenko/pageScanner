@@ -4,6 +4,7 @@
     <title>Search results</title>
     <h1 id="searchStatus">Searching...</h1>
     <button onclick="stopSearch()">Stop search</button>
+    <button onclick="startNewSearch()">Start new search</button>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css" rel="stylesheet" type="text/css"/>
@@ -67,6 +68,14 @@
         });
     }
     refreshResults();
+
+    function startNewSearch() {
+//        $('#results tbody tr').remove();
+        window.location = '/';
+//        var table = document.getElementById("results");
+//        Table.innerHTML = "";
+    }
+
 </script>
 </body>
 </html>

@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 @Service
 public class PageParseService {
 
+    private static final Integer DEFAULT_MAX_NUMBER_OF_URL = 20;
+
     @Autowired
     private LoadService pageLoadService;
     @Autowired
@@ -26,7 +28,7 @@ public class PageParseService {
     private List<SearchResultItem> searchResultItemList = new ArrayList<>();
 
     public void processPage(SearchForm searchForm){
-
+        Integer maxNumberOfUrlsToLoad = Optional.ofNullable(searchForm.getMaxNumberOfUrl()).orElse(DEFAULT_MAX_NUMBER_OF_URL);
         while(!documentQueue.isEmpty() && !stopSearch) {
             String currentLink = linksQueue.poll();
             Future<Document> future = documentQueue.poll();
@@ -45,7 +47,7 @@ public class PageParseService {
             }
             List<String> links = linkSearchService.searchLinks(document);
             for (String link : links) {
-                if(count < searchForm.getMaxNumberOfUrl()) {
+                if(count < maxNumberOfUrlsToLoad) {
                     documentQueue.add(pageLoadService.loadPage(link));
                     linksQueue.add(link);
                     count++;
@@ -66,6 +68,8 @@ public class PageParseService {
     }
 
     public void startSearch(SearchForm searchForm) {
+        documentQueue.clear();
+        linksQueue.clear();
         stopSearch = false;
         searchFinished = false;
         pageLoadService.init(searchForm.getNumOfThreads());

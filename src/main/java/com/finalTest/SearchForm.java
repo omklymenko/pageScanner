@@ -1,16 +1,11 @@
 package com.finalTest;
 
-import org.springframework.util.StringUtils;
-
 public class SearchForm {
 
     private String url;
     private String textToSearch;
     private Integer numOfThreads;
     private Integer maxNumberOfUrl;
-
-    private final Integer defaultNumOfThreads = 5;
-    private final Integer defaultMaxNumberOfUrl = 20;
 
     public String getUrl() {
         return url;
@@ -29,12 +24,7 @@ public class SearchForm {
     }
 
     public Integer getNumOfThreads() {
-        if(!StringUtils.isEmpty(numOfThreads)) {
-            return numOfThreads;
-        } else {
-            setNumOfThreads(defaultNumOfThreads);
-            return defaultNumOfThreads;
-        }
+        return numOfThreads;
     }
 
     public void setNumOfThreads(Integer numOfThreads) {
@@ -42,12 +32,7 @@ public class SearchForm {
     }
 
     public Integer getMaxNumberOfUrl() {
-        if(!StringUtils.isEmpty(maxNumberOfUrl)){
-            return maxNumberOfUrl;
-        } else {
-            setMaxNumberOfUrl(defaultMaxNumberOfUrl);
-            return defaultMaxNumberOfUrl;
-        }
+        return maxNumberOfUrl;
     }
 
     public void setMaxNumberOfUrl(Integer maxNumberOfUrl) {
