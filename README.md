@@ -1,4 +1,4 @@
-# task
+# PageScanner
 
 An application searches for text on web pages.
 Search begins with the specified url. All links found on this page are used for further search.
